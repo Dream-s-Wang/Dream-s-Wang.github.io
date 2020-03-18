@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang=zh-tw>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>使用docker搭建typecho博客系统 | Hexo</title>
+  
+<link rel="stylesheet" href="/style.css">
+
+  
+<link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>Hexo</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>使用docker搭建typecho博客系统</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2020/03/18</time>
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#docker" class='tag'>docker</a>
+
+
+            
+          </div>
+          <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li>服务器：centos7<h1 id="所需软件"><a href="#所需软件" class="headerlink" title="所需软件"></a>所需软件</h1></li>
+<li>git  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure></li>
+<li>docker  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install docker</span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure></li>
+<li>nginx  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install nginx</span><br><span class="line">systemctl start nginx</span><br><span class="line">systemctl <span class="built_in">enable</span> nginx</span><br></pre></td></tr></table></figure>
+<h1 id="下载typecho"><a href="#下载typecho" class="headerlink" title="下载typecho"></a>下载typecho</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/typecho/typecho.git</span><br></pre></td></tr></table></figure>
+<h1 id="构建docker镜像"><a href="#构建docker镜像" class="headerlink" title="构建docker镜像"></a>构建docker镜像</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> typecho/tools</span><br><span class="line">docker build -t typecho .</span><br></pre></td></tr></table></figure>
+<h1 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /var/www/typecho-docker</span><br><span class="line">docker run -d --name mytypecho -v /var/www/typecho-docker:/www typecho</span><br></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><h2 id="查看typecho容器地址"><a href="#查看typecho容器地址" class="headerlink" title="查看typecho容器地址"></a>查看typecho容器地址</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker ps <span class="comment">#查看容器，找到你的ID（一般前两位就够了，我这里是ee）记住这个一会要用</span></span><br><span class="line">docker inspect ee <span class="comment">#找到容器的ip，eg："IPAddress": "xxx.xxx.xxx.xxx",记住这个一会要用</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/conf.d/typecho.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        location / &#123;</span><br><span class="line">        proxy_pass http://172.18.0.2:80;</span><br><span class="line">        proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">        proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        proxy_set_header REMOTE-HOST <span class="variable">$remote_addr</span>;</span><br><span class="line">        add_header X-Cache <span class="variable">$upstream_cache_status</span>;</span><br><span class="line">        expires 12h;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it ee bash #ee：之前的容器ID，进入容器</span><br><span class="line">vim &#x2F;nginx&#x2F;conf&#x2F;nginx.conf</span><br></pre></td></tr></table></figure>
+将location所在行后面改为<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location ~ .*\.php(\&#x2F;.*)*$ &#123;</span><br></pre></td></tr></table></figure>
+先别退出容器。。。<h2 id="配置数据库"><a href="#配置数据库" class="headerlink" title="配置数据库"></a>配置数据库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p123456</span><br><span class="line">create database typecho;</span><br></pre></td></tr></table></figure>
+##重启主机的nginx和容器<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart nginx</span><br><span class="line">docker restart ee #ee：容器ID</span><br></pre></td></tr></table></figure>
+<h1 id="完成向导"><a href="#完成向导" class="headerlink" title="完成向导"></a>完成向导</h1>打开浏览器，输入http://你的服务器ip</li>
+</ul>
+
+        </section>
+    </article>
+    
+        <!-- disqus 评论框 start -->
+        <div class="comment">
+            <div id="disqus_thread" class="disqus-thread">
+              <i>Loading comments box needs to over the wall</i>
+            </div>
+        </div>
+        <!-- disqus 评论框 end -->
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="your_livere_uid"></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">1.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#所需软件"><span class="toc-number">2.</span> <span class="toc-text">所需软件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#下载typecho"><span class="toc-number">3.</span> <span class="toc-text">下载typecho</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#构建docker镜像"><span class="toc-number">4.</span> <span class="toc-text">构建docker镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#启动容器"><span class="toc-number">5.</span> <span class="toc-text">启动容器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置"><span class="toc-number">6.</span> <span class="toc-text">配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#查看typecho容器地址"><span class="toc-number">6.1.</span> <span class="toc-text">查看typecho容器地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置nginx"><span class="toc-number">6.2.</span> <span class="toc-text">配置nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置数据库"><span class="toc-number">6.3.</span> <span class="toc-text">配置数据库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完成向导"><span class="toc-number">7.</span> <span class="toc-text">完成向导</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+<!-- disqus 公共JS代码 -->
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = "your_disqus_shortname";
+  var disqus_identifier = "http://yoursite.com/2020/03/18/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/";
+  var disqus_url = "http://yoursite.com/2020/03/18/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAtypecho%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F/";
+
+  isAgent(getDisqus)
+
+  // determine user agent in China
+  function isAgent(cb) {
+    var url = '//graph.facebook.com/feed?callback=h';
+    var xhr = new XMLHttpRequest();
+    var called = false;
+    xhr.open('GET', url);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+      called = true;
+      cb(true);
+      }
+    };
+    xhr.send();
+    // timeout 1s, this facebook API is very fast.
+    setTimeout(function() {
+      if (!called) {
+      xhr.abort();
+      cb(false)
+      }
+    }, 1000);
+  }
+
+  function getDisqus(isAgent) {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; 
+    dsq.async = true
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq)
+  }
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2020 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="/lib/in-view.min.js"></script>
+
+
+<script src="/lib/lodash.min.js"></script>
+
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+
+</body>
+</html>
