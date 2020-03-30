@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang=zh-tw>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>给你的windows10壁纸加个日期 | Hexo</title>
+  
+<link rel="stylesheet" href="/style.css">
+
+  
+<link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>Hexo</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>给你的windows10壁纸加个日期</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2020/03/30</time>
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Windows10" class='tag'>Windows10</a>
+
+
+            
+          </div>
+          <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li>python3</li>
+<li>PIL</li>
+<li>pywin32<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><h2 id="给壁纸图片加日期水印"><a href="#给壁纸图片加日期水印" class="headerlink" title="给壁纸图片加日期水印"></a>给壁纸图片加日期水印</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_text</span><span class="params">(text,image_path,save_path_name,text_RGBA=<span class="params">(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>,<span class="number">50</span>)</span>,text_xy = <span class="params">(<span class="number">1.0</span>,<span class="number">1.0</span>)</span>,text_font = <span class="string">'C:\Windows\Fonts\simhei.ttf'</span>,text_font_size=<span class="number">100</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 读入原图</span></span><br><span class="line">    image = Image.open(image_path)</span><br><span class="line">    <span class="comment"># 字体</span></span><br><span class="line">    font = ImageFont.truetype(text_font,text_font_size)</span><br><span class="line">    layer = image.convert(<span class="string">'RGBA'</span>)</span><br><span class="line">    text_overlay = Image.new(<span class="string">'RGBA'</span>,layer.size,(<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>,<span class="number">0</span>))</span><br><span class="line">    image_draw = ImageDraw.Draw(text_overlay)</span><br><span class="line">    <span class="comment"># 文字长宽</span></span><br><span class="line">    text_size_x,text_size_y = image_draw.textsize(text,font)</span><br><span class="line">    <span class="comment"># 文字位置</span></span><br><span class="line">    text_xy = ((layer.size[<span class="number">0</span>]-text_size_x)*text_xy[<span class="number">0</span>],(layer.size[<span class="number">1</span>]-text_size_y)*text_xy[<span class="number">1</span>])</span><br><span class="line">    image_draw.text(text_xy,text,font=font,fill=text_RGBA)</span><br><span class="line">    <span class="comment"># 合成</span></span><br><span class="line">    after = Image.alpha_composite(layer,text_overlay)</span><br><span class="line">    <span class="comment"># 导出</span></span><br><span class="line">    after.save(save_path_name)</span><br></pre></td></tr></table></figure>
+<h2 id="设置壁纸"><a href="#设置壁纸" class="headerlink" title="设置壁纸"></a>设置壁纸</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">setWallPaper</span><span class="params">(pic)</span>:</span></span><br><span class="line">    <span class="comment"># 打开注册表</span></span><br><span class="line">    regKey = win32api.RegOpenKeyEx(win32con.HKEY_CURRENT_USER,<span class="string">"Control Panel\\Desktop"</span>,<span class="number">0</span>,win32con.KEY_SET_VALUE)</span><br><span class="line">    <span class="comment">#设置壁纸样式</span></span><br><span class="line">    win32api.RegSetValueEx(regKey,<span class="string">"WallpaperStyle"</span>, <span class="number">0</span>, win32con.REG_SZ, <span class="string">"3"</span>)</span><br><span class="line">    win32api.RegSetValueEx(regKey, <span class="string">"TileWallpaper"</span>, <span class="number">0</span>, win32con.REG_SZ, <span class="string">"0"</span>)</span><br><span class="line">    <span class="comment"># 设置壁纸</span></span><br><span class="line">    win32gui.SystemParametersInfo(win32con.SPI_SETDESKWALLPAPER,pic, win32con.SPIF_SENDWININICHANGE)</span><br></pre></td></tr></table></figure>
+<h2 id="整体代码"><a href="#整体代码" class="headerlink" title="整体代码"></a>整体代码</h2><a href="https://github.com/Dream-s-Wang/happy-windows/blob/master/add_date_to_bg.py" target="_blank" rel="noopener">github</a><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python add_date_to_bg.py my_bg_img.jpg</span><br></pre></td></tr></table></figure>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><blockquote>
+<p>加个开机启动，美滋滋！！！</p>
+</blockquote>
+</li>
+</ul>
+
+        </section>
+    </article>
+    
+        <!-- disqus 评论框 start -->
+        <div class="comment">
+            <div id="disqus_thread" class="disqus-thread">
+              <i>Loading comments box needs to over the wall</i>
+            </div>
+        </div>
+        <!-- disqus 评论框 end -->
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="your_livere_uid"></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">1.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#代码"><span class="toc-number">2.</span> <span class="toc-text">代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#给壁纸图片加日期水印"><span class="toc-number">2.1.</span> <span class="toc-text">给壁纸图片加日期水印</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置壁纸"><span class="toc-number">2.2.</span> <span class="toc-text">设置壁纸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整体代码"><span class="toc-number">2.3.</span> <span class="toc-text">整体代码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后续"><span class="toc-number">3.</span> <span class="toc-text">后续</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+<!-- disqus 公共JS代码 -->
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES * * */
+  var disqus_shortname = "your_disqus_shortname";
+  var disqus_identifier = "http://yoursite.com/2020/03/30/%E7%BB%99%E4%BD%A0%E7%9A%84windows10%E5%A3%81%E7%BA%B8%E5%8A%A0%E4%B8%AA%E6%97%A5%E6%9C%9F/";
+  var disqus_url = "http://yoursite.com/2020/03/30/%E7%BB%99%E4%BD%A0%E7%9A%84windows10%E5%A3%81%E7%BA%B8%E5%8A%A0%E4%B8%AA%E6%97%A5%E6%9C%9F/";
+
+  isAgent(getDisqus)
+
+  // determine user agent in China
+  function isAgent(cb) {
+    var url = '//graph.facebook.com/feed?callback=h';
+    var xhr = new XMLHttpRequest();
+    var called = false;
+    xhr.open('GET', url);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+      called = true;
+      cb(true);
+      }
+    };
+    xhr.send();
+    // timeout 1s, this facebook API is very fast.
+    setTimeout(function() {
+      if (!called) {
+      xhr.abort();
+      cb(false)
+      }
+    }, 1000);
+  }
+
+  function getDisqus(isAgent) {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; 
+    dsq.async = true
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq)
+  }
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2020 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="/lib/in-view.min.js"></script>
+
+
+<script src="/lib/lodash.min.js"></script>
+
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+
+</body>
+</html>
